@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smart Lighting System - Lab PTIK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="side"><a href="#top" title="Ringkasan">💡</a><a href="#kontrol" title="Kontrol">🎛️</a><a href="#riwayat" title="Riwayat">🕘</a><button id="btnSet" title="Pengaturan">⚙️</button></nav>
+<div class="wrap" id="top">
+<header>
+  <div><h1>Smart Lighting System</h1><p>Laboratorium PTIK · Sistem Otomasi Industri</p></div>
+  <div class="hd"><b id="clock">--.--.--</b> WIB <span id="conn" class="pill off">Terputus</span></div>
+</header>
+<main class="grid">
+  <section class="card" id="hero">
+    <h2>Status Lampu</h2>
+    <div class="ring"><svg viewBox="0 0 120 120"><circle class="bg" cx="60" cy="60" r="52"/><circle class="fg" cx="60" cy="60" r="52"/></svg><div><b id="lamp">OFF</b><small id="pwmShow"></small></div></div>
+    <p id="why" class="muted">Menunggu data dari ESP32…</p>
+  </section>
+  <section class="card span2"><h2>Estimasi Lux</h2>
+    <canvas id="cv" width="760" height="230"></canvas>
+    <p class="muted small"><i class="dot r"></i>Estimasi Lux <i class="dot p"></i>Lampu ON</p></section>
+
+  <section class="card"><h2>Gerakan (PIR)</h2><div class="big" id="motion">--</div><small id="motionT" class="muted">-</small><div class="bars" id="bars"></div></section>
+  <section class="card"><h2>Intensitas Cahaya</h2>
+    <svg viewBox="0 0 180 100" class="gauge"><path class="bg" d="M10 90A80 80 0 0 1 170 90"/><path class="fg" id="gfg" d="M10 90A80 80 0 0 1 170 90"/></svg>
+    <div class="gtxt"><b id="lux">--</b> Lux</div><small id="dark" class="muted">-</small></section>
+  <section class="card"><h2>Lampu ON Hari Ini</h2>
+    <div class="ring sm"><svg viewBox="0 0 120 120"><circle class="bg" cx="60" cy="60" r="52"/><circle class="fg v" id="rdur" cx="60" cy="60" r="52"/></svg><div><b id="durp">0%</b></div></div>
+    <div class="big s" id="dur">0 Jam 0 Menit</div><small class="muted">dari jatah <span id="baseT">8</span> jam/hari</small></section>
+
+  <section class="card" id="kontrol"><h2>Kontrol Lampu</h2>
+    <div class="seg"><button id="bAuto">Otomatis</button><button id="bMan">Manual</button></div>
+    <label class="row">Lampu <span class="sw"><input type="checkbox" id="swLamp"><i></i></span></label>
+    <label>Kecerahan (PWM) <b id="pwmV">100%</b><input type="range" id="pwm" min="0" max="100" step="5" value="100"></label>
+    <label class="row">Notifikasi Telegram <span class="sw"><input type="checkbox" id="swTg"><i></i></span></label>
+    <p id="ctlNote" class="muted small"></p></section>
+  <section class="card"><h2>Penghematan Energi</h2>
+    <div class="big" id="savP">0%</div><small class="muted">lebih hemat dari tanpa otomasi</small>
+    <div class="cmp"><span>Sebelum</span><div><i id="eB" style="width:100%"></i></div><b id="eBv">0</b></div>
+    <div class="cmp"><span>Sesudah</span><div><i id="eA" class="v" style="width:0"></i></div><b id="eAv">0</b></div></section>
+  <section class="card span3" id="riwayat"><h2>Riwayat Penggunaan</h2>
+    <ul id="log" class="feed"></ul><p id="empty" class="muted">Belum ada riwayat. Riwayat muncul saat lampu berubah status.</p></section>
+</main></div>
+<dialog id="dlg"><form method="dialog" id="frm">
+  <h2>Pengaturan</h2>
+  <label>Sumber data <select id="fMode"><option value="mqtt">MQTT (WebSocket)</option><option value="http">ESP32 langsung (HTTP, tanpa kontrol)</option></select></label>
+  <label>IP ESP32 (mode HTTP) <input id="fIp" placeholder="192.168.1.50"></label>
+  <label>Broker MQTT (wss) <input id="fBroker"></label>
+  <label>Topik MQTT <input id="fTopic"></label>
+  <label>Pemakaian sebelum otomasi (jam/hari) <input id="fBase" type="number" min="1" step="0.5"></label>
+  <label>Daya lampu (Watt) <input id="fWatt" type="number" min="0.1" step="0.1"></label>
+  <label>Estimasi Lux saat gelap <input id="fLd" type="number" min="0"></label>
+  <label>Estimasi Lux saat terang <input id="fLt" type="number" min="1"></label>
+  <p class="muted small">Sensor LDR digital tidak mengukur Lux. Ukur dengan aplikasi lux meter di HP, lalu isi nilainya di sini.</p>
+  <div class="row2"><button value="save">Simpan</button><button value="x" class="ghost">Batal</button><button type="button" id="btnReset" class="ghost">Hapus riwayat</button></div>
+</form></dialog>
+<script src="https://cdn.jsdelivr.net/npm/mqtt@5.3.1/dist/mqtt.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
